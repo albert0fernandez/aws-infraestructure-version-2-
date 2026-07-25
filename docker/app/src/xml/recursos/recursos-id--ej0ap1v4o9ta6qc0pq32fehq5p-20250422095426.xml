@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recursos  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="../../schemas/validacion_recursos.xsd">
+    <recurso>
+        <recurso_codigo>PRO-0004</recurso_codigo>
+        <recurso_nombre>Proyector 0004</recurso_nombre>
+        <recurso_precio>500.00</recurso_precio>
+        <recurso_aula>1</recurso_aula>
+        <recurso_estado>2</recurso_estado>
+    </recurso>
+    <recurso>
+        <recurso_codigo>ORD-0004</recurso_codigo>
+        <recurso_nombre>Ordenador 0004</recurso_nombre>
+        <recurso_precio>1000.00</recurso_precio>
+        <recurso_aula>2</recurso_aula>
+        <recurso_estado>1</recurso_estado>
+    </recurso>
+    <recurso>
+        <recurso_codigo>POR-0004</recurso_codigo>
+        <recurso_nombre>Portátil 0004</recurso_nombre>
+        <recurso_precio>800.00</recurso_precio>
+        <recurso_aula>3</recurso_aula>
+        <recurso_estado>1</recurso_estado>
+    </recurso>
+    <recurso>
+        <recurso_codigo>PRO-0005</recurso_codigo>
+        <recurso_nombre>Proyector 0005</recurso_nombre>
+        <recurso_precio>500.00</recurso_precio>
+        <recurso_aula>1</recurso_aula>
+        <recurso_estado>2</recurso_estado>
+    </recurso>
+    <recurso>
+        <recurso_codigo>ORD-0005</recurso_codigo>
+        <recurso_nombre>Ordenador 0005</recurso_nombre>
+        <recurso_precio>1000.00</recurso_precio>
+        <recurso_aula>2</recurso_aula>
+        <recurso_estado>4</recurso_estado>
+    </recurso>
+    <recurso>
+        <recurso_codigo>POR-0005</recurso_codigo>
+        <recurso_nombre>Portátil 0005</recurso_nombre>
+        <recurso_precio>800.00</recurso_precio>
+        <recurso_aula>3</recurso_aula>
+        <recurso_estado>3</recurso_estado>
+    </recurso>
+</recursos>

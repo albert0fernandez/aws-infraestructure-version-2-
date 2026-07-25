@@ -1,0 +1,41 @@
+services:
+  # ── Equivalente local de tu RDS MySQL ────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: academia-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql                              # los datos sobreviven a docker compose down
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro  # esquema + trigger + datos de ejemplo (solo 1ª vez)
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+    # Sin "ports": la BD NO se expone al host, solo a la red interna
+    # (misma filosofía que tu RDS en subred privada ✔)
+
+  # ── Equivalente local de tu EC2 con la app PHP ───────────────────
+  app:
+    build: ./app
+    container_name: academia-app
+    restart: unless-stopped
+    ports:
+      - "8081:80"          # http://localhost:8080
+    environment:
+      DB_HOST: db          # el DNS interno de compose resuelve "db" al contenedor MySQL
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy   # la app no arranca hasta que MySQL responde al ping
+
+volumes:
+  db_data:

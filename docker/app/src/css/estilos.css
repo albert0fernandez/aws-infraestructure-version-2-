@@ -1,0 +1,59 @@
+/**
+ * Archivo: estilos.css
+ * 
+ * Archivo de estilos principal para el sistema de inventario.
+ * 
+ * Este archivo contiene las reglas CSS para la estructura y el diseño de la aplicación.
+ * 
+ * @autor RetaCantabria - ASIR1 - Dpto. Informática - IES Alisal 
+ * @fecha marzo de 2025
+ */
+
+ 
+/* Estilos generales para el cuerpo y el HTML */
+body, html {
+    height: auto;
+    width: 100%;
+    display: block;
+}
+
+/* Estilos para el elemento principal */
+main {
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5%;
+}
+
+/* Estilos para el pie de página */
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+}
+
+/* Estilos para el contenedor principal */
+.main-container {
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5%;
+}
+
+/* Estilos para los elementos dentro del contenedor principal */
+.main-container > .login,
+.main-container > .hero-body {
+    height: auto;
+    width: 100%;
+    max-width: 400px;
+    min-width: 300px;
+}
+
+/* Estilos para los formularios en línea */
+.form-inline {
+    display: inline-flex;
+}

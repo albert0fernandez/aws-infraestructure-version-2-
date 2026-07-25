@@ -1,0 +1,8 @@
+# Nada de esto debe entrar en la imagen
+.git
+.gitignore
+*.md
+.env
+.env.*
+Dockerfile
+.dockerignore
