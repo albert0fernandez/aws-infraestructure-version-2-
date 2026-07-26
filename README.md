@@ -1,7 +1,6 @@
 # aws-infraestructure-version-2-
 
-[![Terraform CI](https://github.com/albert0fernandez/aws-infraestructure-version-2-/actions/workflows/terraform.yml/badge.svg)](https://github.com/albert0fernandez/aws-infraestructure-version-2-/actions/workflows/terraform.yml)
-[![Docker Build](https://github.com/albert0fernandez/aws-infraestructure-version-2-/actions/workflows/docker.yml/badge.svg)](https://github.com/albert0fernandez/aws-infraestructure-version-2-/actions/workflows/docker.yml)
+
 
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
@@ -9,7 +8,6 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 
 **Integración de Docker · Terraform · CI/CD con GitHub Actions.**
 
