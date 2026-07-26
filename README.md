@@ -13,16 +13,8 @@ Dos contenedores con Docker Compose: la app PHP y MySQL 8, reproduciendo en loca
 Fase 2 — Infraestructura en AWS con Terraform
 La misma arquitectura de la Fase 1, pero llevada a AWS con Terraform (Infraestructura como Código): en vez de crearla a mano en la consola, la describimos en ficheros .tf y Terraform la crea (o destruye) con un solo comando.
 
-                                 Internet
-                    │  Internet Gateway
-              ┌─────▼─────┐  VPC 10.2.0.0/16
-   pública ──►│    EC2    │  Docker + app PHP · puerto 80
-              └─────┬─────┘
-                    │ 3306
-   privada ──►┌─────▼─────┐  RDS MySQL 8 · sin acceso desde Internet
-              └───────────┘
-              
-La EC2 es la única que puede hablar con la RDS (puerto 3306); la base de datos no es accesible desde Internet.
+                  <img width="592" height="740" alt="image" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
+
 
 | Fichero / carpeta | Qué hace |
 | :--- | :--- |
@@ -41,7 +33,11 @@ Los 4 pasos del despliegue
 
 cd terraform && terraform init && terraform apply
 <!-- 📸 CAPTURA 1: final del `apply` con los outputs -->
-3. Comprobar — abrir http://<IP-pública> (carga el login del inventario) y ver la EC2 y la RDS en la consola de AWS (región eu-west-1).
+3. Comprobar — abrir <http://54.194.53.43/> (carga el login del inventario) y ver la EC2 y la RDS en la consola de AWS (región eu-west-1).
+   <img width="859" height="350" alt="image" src="https://github.com/user-attachments/assets/ae9b7fe0-c65e-4546-bca3-b2d98c2609a7" />
+   <img width="875" height="343" alt="image" src="https://github.com/user-attachments/assets/2ce0e44f-6791-4eb1-b6b3-ab74cab8d115" />
+
+
 
 <!-- 📸 CAPTURA 2: app en el navegador con la IP de AWS visible --> <!-- 📸 CAPTURA 3: consola AWS → EC2 "running" en eu-west-1 --> <!-- 📸 CAPTURA 4: consola AWS → RDS "Available" en eu-west-1 -->
 4. Eliminar todo — como AWS cobra por hora, al terminar se destruye la infraestructura completa:
