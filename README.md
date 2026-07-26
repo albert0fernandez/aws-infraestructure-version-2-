@@ -33,8 +33,14 @@ Los 4 pasos del despliegue
 
 cd terraform && terraform init && terraform apply
 <!-- 📸 CAPTURA 1: final del `apply` con los outputs -->
-3. Comprobar — abrir <http://54.194.53.43/> (carga el login del inventario) y ver la EC2 y la RDS en la consola de AWS (región eu-west-1).
-   <img width="859" height="350" alt="image" src="https://github.com/user-attachments/assets/ae9b7fe0-c65e-4546-bca3-b2d98c2609a7" />
+3. Comprobar — abrir http://63.35.172.128/  (carga el login del inventario) y ver la EC2 y la RDS en la consola de AWS (región eu-west-1).
+
+  
+   <img width="1088" height="311" alt="image" src="https://github.com/user-attachments/assets/ef5fea0d-5e29-49d6-bad0-0c1bf9903192" />
+
+  
+  <img width="864" height="932" alt="image" src="https://github.com/user-attachments/assets/2ebd0469-070e-4329-84d3-8804aef48482" />
+
    <img width="875" height="343" alt="image" src="https://github.com/user-attachments/assets/2ce0e44f-6791-4eb1-b6b3-ab74cab8d115" />
 
 
