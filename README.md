@@ -13,7 +13,7 @@ Dos contenedores con Docker Compose: la app PHP y MySQL 8, reproduciendo en loca
 Fase 2 — Infraestructura en AWS con Terraform
 La misma arquitectura de la Fase 1, pero llevada a AWS con Terraform (Infraestructura como Código): en vez de crearla a mano en la consola, la describimos en ficheros .tf y Terraform la crea (o destruye) con un solo comando.
 
-                 Internet
+                                 Internet
                     │  Internet Gateway
               ┌─────▼─────┐  VPC 10.2.0.0/16
    pública ──►│    EC2    │  Docker + app PHP · puerto 80
@@ -21,18 +21,18 @@ La misma arquitectura de la Fase 1, pero llevada a AWS con Terraform (Infraestru
                     │ 3306
    privada ──►┌─────▼─────┐  RDS MySQL 8 · sin acceso desde Internet
               └───────────┘
+              
 La EC2 es la única que puede hablar con la RDS (puerto 3306); la base de datos no es accesible desde Internet.
 
-Estructura de terraform/
-Fichero / carpeta	Qué hace
-main.tf	Orquesta los 3 módulos y les pasa las variables
-providers.tf	Proveedor AWS, región y versión de Terraform
-variables.tf / outputs.tf	Entradas (nombres, credenciales…) y salidas (IP, endpoint RDS)
-terraform.tfvars.example	Plantilla de variables sin secretos reales
-modules/network/	Red: VPC, subredes públicas/privadas (2 AZ), Internet Gateway, rutas y security groups (firewall: 80 abierto, 22 solo desde tu IP, 3306 solo desde la web)
-modules/compute/	Máquina: EC2 Ubuntu (t3.micro) + user_data.sh.tpl, el script de arranque que instala Docker, clona el repo y levanta el contenedor de la Fase 1 apuntando a la RDS
-modules/database/	Base de datos: RDS MySQL 8 (db.t3.micro) privada, en las subredes privadas
-Seguridad: las contraseñas y el terraform.tfstate nunca se suben al repo (van en .gitignore), porque contienen datos sensibles.
+| Fichero / carpeta | Qué hace |
+| :--- | :--- |
+| **`main.tf`** | Orquesta los 3 módulos y les pasa las variables. |
+| **`providers.tf`** | Proveedor AWS, región y versión de Terraform. |
+| **`variables.tf` / `outputs.tf`** | Entradas (nombres, credenciales…) y salidas (IP, endpoint RDS). |
+| **`terraform.tfvars.example`** | Plantilla de variables sin secretos reales. |
+| **`modules/network/`** | Red: VPC, subredes públicas/privadas (2 AZ), Internet Gateway, rutas y *security groups* (firewall: 80 abierto, 22 solo desde tu IP, 3306 solo desde la web). |
+| **`modules/compute/`** | Máquina: EC2 Ubuntu (`t3.micro`) + `user_data.sh.tpl`, el script de arranque que instala Docker, clona el repo y levanta el contenedor de la Fase 1 apuntando a la RDS. |
+| **`modules/database/`** | Base de datos: RDS MySQL 8 (`db.t3.micro`) privada, en las subredes privadas. |
 
 Los 4 pasos del despliegue
 1. Escribir el código — la infraestructura descrita en los .tf. Aún no existe nada en AWS.
