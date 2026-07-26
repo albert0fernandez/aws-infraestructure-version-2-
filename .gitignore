@@ -8,3 +8,5 @@
 *.tfstate.*
 .terraform/
 crash.log
+tfplan
+*.tfplan
