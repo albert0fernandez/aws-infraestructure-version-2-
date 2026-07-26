@@ -184,3 +184,6 @@ CREATE TABLE `t_mantenimiento` (
 INSERT INTO `t_mantenimiento` (`usuario_id`, `recurso_id`, `mantenimiento_fecha`, `mantenimiento_descripcion`) VALUES
 (1, 1, '2025-02-10', 'Revisión general del proyector'),
 (2, 2, '2025-02-11', 'Actualización de software del ordenador');
+
+-- Contraseña conocida para Administrador en despliegues (los hashes originales del reto son desconocidos)
+UPDATE t_usuario SET usuario_clave='$2y$12$KByVoQ4iO5nkxTUbI6Pwz.rA94FdXIaHU464ZiU8Zj9kzA2OzY5aS' WHERE usuario_usuario='Administrador';
