@@ -1,4 +1,4 @@
-<img width="294" height="124" alt="image" src="https://github.com/user-attachments/assets/959a3ced-48fc-4b1e-89b5-69701476b16d" /># aws-infraestructure-version-2-
+# aws-infraestructure-version-2-
 Integracion de Docker | Terraform | + CI CD | GitHub Actions 
 
 Dos contenedores con Docker Compose: la app PHP y MySQL 8, reproduciendo en local el par EC2 + RDS. La base de datos no expone puertos (como una RDS privada) y la app espera a su healthcheck antes de arrancar. 
@@ -13,7 +13,7 @@ Dos contenedores con Docker Compose: la app PHP y MySQL 8, reproduciendo en loca
 Fase 2 — Infraestructura en AWS con Terraform
 La misma arquitectura de la Fase 1, pero llevada a AWS con Terraform (Infraestructura como Código): en vez de crearla a mano en la consola, la describimos en ficheros .tf y Terraform la crea (o destruye) con un solo comando.
 
-                  <img width="592" height="740" alt="image" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
+  <img width="592" height="740" alt="image" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
 
 
 | Fichero / carpeta | Qué hace |
