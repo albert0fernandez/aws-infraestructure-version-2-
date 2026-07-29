@@ -27,7 +27,7 @@ services:
     container_name: academia-app
     restart: unless-stopped
     ports:
-      - "8081:80"          # http://localhost:8080
+      - "8081:80"          # http://localhost:8081
     environment:
       DB_HOST: db          # el DNS interno de compose resuelve "db" al contenedor MySQL
       DB_NAME: ${DB_NAME}

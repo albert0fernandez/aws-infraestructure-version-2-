@@ -8,6 +8,7 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 
 **Integración de Docker · Terraform · CI/CD con GitHub Actions.**
 
@@ -20,7 +21,7 @@ por último, se documenta todo el proceso.
 
 - [x] **Fase 1** — Aplicación PHP dockerizada (Docker Compose: app + MySQL)
 - [x] **Fase 2** — Infraestructura en AWS con Terraform (VPC, RDS, EC2 + Docker)
-- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push de la imagen )
+- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push de la imagen a GHCR)
 - [x] **Fase 4** — Documentación 
 
 ## Índice
@@ -97,7 +98,8 @@ cp .env.example .env      # ajusta credenciales si quieres
 docker compose up -d --build
 ```
 
-La app queda en `http://localhost` y la base se carga sola desde `db/init.sql`.
+La app queda en `http://localhost:8081` (el `docker-compose.yml` mapea el puerto host
+`8081` al `80` del contenedor) y la base se carga sola desde `db/init.sql`.
 
 <img width="1091" height="98" alt="image" src="https://github.com/user-attachments/assets/e788e235-827c-4d91-b459-f49aee4b34a8" />
 
@@ -213,9 +215,16 @@ terraform apply                # crea la infraestructura REAL (~5-10 min por la 
 Al terminar, Terraform muestra los **outputs**: la IP pública de la EC2 y el *endpoint* de la
 RDS. Cuando el `user_data` acabe (~3-4 min), la app estará disponible en `http://<IP-pública>`.
 
-Acceso a la aplicación: **`Administrador`** / **`MiClave@2026`**.
+Acceso a la aplicación (usuario de demostración): **`Administrador`** / **`MiClave@2026`**.
 
 <!-- 📸 CAPTURA: final del `apply` con los outputs -->
+
+> **🔧 Un reto que resolví:** en el primer despliegue el login fallaba porque el `init.sql`
+> del reto traía *hashes* de contraseña desconocidos. Lo resolví fijando una contraseña
+> conocida (un `UPDATE` en `init.sql` y en el `user_data`) y **recreando solo la instancia
+> EC2** con `terraform apply -replace="module.compute.aws_instance.web"`, sin tocar la RDS ni
+> el resto de la red. Es un buen ejemplo de por qué el estado y la modularidad de Terraform
+> importan: puedes reconstruir una pieza sin afectar a las demás.
 
 ### Destroy — decisión FinOps
 
