@@ -99,17 +99,6 @@ Ambos son *Infraestructura como Código*, pero con diferencias que justifican el
 
 Una **VPC** de dos capas: la **EC2** vive en subredes **públicas** (sirve la app); la **RDS**, en subredes **privadas** (sin Internet). Solo la EC2 habla con la base de datos, por el puerto 3306. Todo en **2 zonas de disponibilidad**.
 
-```mermaid
-flowchart TB
-    Internet([Internet])
-    subgraph VPC["VPC 10.2.0.0/16"]
-        direction TB
-        EC2["EC2 · subred pública<br/>Docker + app PHP · puerto 80"]
-        RDS["RDS MySQL 8 · subred privada<br/>sin acceso desde Internet"]
-        EC2 -->|"3306"| RDS
-    end
-    Internet -->|"Internet Gateway · puerto 80"| EC2
-```
 
 <img width="592" height="740" alt="Diagrama de arquitectura AWS" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
 
