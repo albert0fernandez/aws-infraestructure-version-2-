@@ -118,15 +118,13 @@ comando. Esto la hace repetible, versionable en Git y fácil de eliminar cuando 
 El cambio de fondo respecto a la v1 es sustituir CloudFormation por Terraform. Ambos son
 *Infraestructura como Código*, pero con diferencias que justifican el salto:
 
-| Aspecto | CloudFormation <img width="64" height="64" alt="image" src="https://github.com/user-attachments/assets/31ee8976-98e3-49ec-9455-fa401d24b3de" />
- | Terraform <img width="64" height="64" alt="image" src="https://github.com/user-attachments/assets/51e7e37b-beb2-4bf7-84d6-99740f9e5d89" />
- |
-|---|---|---|
+| Aspecto | CloudFormation | Terraform |
+| :--- | :--- | :--- |
 | **Lenguaje** | YAML/JSON, específico de AWS | HCL, más legible y expresivo |
-| **Alcance** | Solo AWS | Multi-proveedor (AWS, Azure, GCP…) |
+| **Alcance** | Solo AWS | Multi-proveedor (AWS, Azure, GCP...) |
 | **Estado** | Lo gestiona AWS internamente (*stacks*), no ves el fichero | Fichero `terraform.tfstate` que gestionas tú (local o remoto) |
-| **Previsualización** | *Change sets* (existe, pero es un paso aparte) | `terraform plan` nativo: ves los cambios **antes** de aplicar |
-| **Reutilización** | *Nested stacks*, algo rígidas | **Módulos** de primera clase (`network`, `compute`, `database`) |
+| **Previsualización** | *Change sets* (existe, pero es un paso aparte) | `terraform plan` nativo: ves los cambios antes de aplicar |
+| **Reutilización** | *Nested stacks*, algo rígidas | Módulos de primera clase (`network`, `compute`, `database`) |
 | **Comunidad** | Recursos y ejemplos de AWS | *Registry* con miles de módulos y *providers* |
 
 **Qué se aprende con cada uno:** CloudFormation enseña el modelo de recursos de AWS "puro",
