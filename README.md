@@ -72,9 +72,9 @@ docker compose up -d --build
 
 La app queda en **`http://localhost:8081`** (el compose mapea `8081:80`).
 
-<img width="1091" height="98" alt="image" src="https://github.com/user-attachments/assets/e788e235-827c-4d91-b459-f49aee4b34a8" />
+<img width="1091" height="98" alt="image" src="docs/img/fase1-docker-ps.png" />
 
-<img width="1628" height="344" alt="image" src="https://github.com/user-attachments/assets/50026b0b-1061-432e-838d-7f228dc8e915" />
+<img width="1628" height="344" alt="image" src="docs/img/fase1-app-local.png" />
 
 ---
 
@@ -86,7 +86,7 @@ Llevo esa arquitectura a AWS **sin clicar en la consola**: la describo en ficher
 
 Ambos son *Infraestructura como Código*, pero con diferencias que justifican el salto:
 
-| Aspecto | <img src="https://github.com/user-attachments/assets/1b30b26d-7baf-49b8-998d-709dbaf2a04c" width="22" height="22" align="center" /> CloudFormation | <img src="https://github.com/user-attachments/assets/15751f6f-39cb-4f1e-a7dd-6a43a2e3fcc4" width="22" height="22" align="center" /> Terraform |
+| Aspecto | <img src="docs/img/icon-cloudformation.png" width="22" height="22" align="center" /> CloudFormation | <img src="docs/img/icon-terraform.png" width="22" height="22" align="center" /> Terraform |
 | :--- | :--- | :--- |
 | **Lenguaje** | YAML/JSON, solo AWS | HCL, multi-proveedor |
 | **Estado** | Lo gestiona AWS (*stacks*) | Fichero `terraform.tfstate` que gestionas tú |
@@ -100,7 +100,7 @@ Ambos son *Infraestructura como Código*, pero con diferencias que justifican el
 Una **VPC** de dos capas: la **EC2** vive en subredes **públicas** (sirve la app); la **RDS**, en subredes **privadas** (sin Internet). Solo la EC2 habla con la base de datos, por el puerto 3306. Todo en **2 zonas de disponibilidad**.
 
 
-<img width="592" height="740" alt="Diagrama de arquitectura AWS" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
+<img width="592" height="740" alt="Diagrama de arquitectura AWS" src="docs/img/arquitectura.png" />
 
 El acceso lo controlan los ***security groups***: puerto **80** abierto, **22 (SSH)** solo desde tu IP y **3306** solo desde la capa web.
 
@@ -179,14 +179,14 @@ Docker Build se autentica en GHCR con el `GITHUB_TOKEN` automático de Actions, 
 ## Fase 4 — Documentación
 
 **App en AWS** — inventario funcionando con la IP pública:
-<img width="1088" height="311" alt="Consola EC2 en AWS" src="https://github.com/user-attachments/assets/ef5fea0d-5e29-49d6-bad0-0c1bf9903192" />
+<img width="1088" height="311" alt="Consola EC2 en AWS" src="docs/img/consola-ec2.png" />
 
 
 **Consola de AWS (`eu-west-1`)** — EC2 en *running* y RDS en *available*:
 
-<img width="864" height="932" alt="App de inventario en AWS" src="https://github.com/user-attachments/assets/2ebd0469-070e-4329-84d3-8804aef48482" />
+<img width="864" height="932" alt="App de inventario en AWS" src="docs/img/app-aws.png" />
 
-<img width="875" height="343" alt="Consola RDS en AWS" src="https://github.com/user-attachments/assets/2ce0e44f-6791-4eb1-b6b3-ab74cab8d115" />
+<img width="875" height="343" alt="Consola RDS en AWS" src="docs/img/consola-rds.png" />
 
 ### Seguridad
 
