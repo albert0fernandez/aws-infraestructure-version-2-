@@ -136,7 +136,7 @@ Dos variables son obligatorias y **nunca se suben al repo**: `admin_cidr` (tu IP
 export AWS_PROFILE=admin   # usuario IAM, no root
 cd terraform
 terraform init
-terraform plan             # muestra qué se va a crear, sin tocar nada
+terraform plan             
 terraform apply            # crea la infraestructura (~5-10 min por la RDS)
 ```
 
@@ -179,12 +179,12 @@ Docker Build se autentica en GHCR con el `GITHUB_TOKEN` automático de Actions, 
 ## Fase 4 — Documentación
 
 **App en AWS** — inventario funcionando con la IP pública:
+<img width="1088" height="311" alt="Consola EC2 en AWS" src="https://github.com/user-attachments/assets/ef5fea0d-5e29-49d6-bad0-0c1bf9903192" />
 
-<img width="864" height="932" alt="App de inventario en AWS" src="https://github.com/user-attachments/assets/2ebd0469-070e-4329-84d3-8804aef48482" />
 
 **Consola de AWS (`eu-west-1`)** — EC2 en *running* y RDS en *available*:
 
-<img width="1088" height="311" alt="Consola EC2 en AWS" src="https://github.com/user-attachments/assets/ef5fea0d-5e29-49d6-bad0-0c1bf9903192" />
+<img width="864" height="932" alt="App de inventario en AWS" src="https://github.com/user-attachments/assets/2ebd0469-070e-4329-84d3-8804aef48482" />
 
 <img width="875" height="343" alt="Consola RDS en AWS" src="https://github.com/user-attachments/assets/2ce0e44f-6791-4eb1-b6b3-ab74cab8d115" />
 
