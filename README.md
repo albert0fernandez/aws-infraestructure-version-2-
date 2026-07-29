@@ -1,4 +1,4 @@
-# AWS Cloud Infrastructure: Academia de Pintura Version.2 -
+# AWS Cloud Infrastructure: Academia de Pintura Version 2 
 
 
 
@@ -20,8 +20,8 @@ por último, se documenta todo el proceso.
 
 - [x] **Fase 1** — Aplicación PHP dockerizada (Docker Compose: app + MySQL)
 - [x] **Fase 2** — Infraestructura en AWS con Terraform (VPC, RDS, EC2 + Docker)
-- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push de la imagen a GHCR)
-- [x] **Fase 4** — Documentación (este README)
+- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push de la imagen )
+- [x] **Fase 4** — Documentación 
 
 ## Índice
 
@@ -43,14 +43,14 @@ por último, se documenta todo el proceso.
 
 ## Introducción
 
-Este proyecto es la **versión 2** de un despliegue de una aplicación de inventario para un
-centro educativo. La aplicación en sí (el CRUD de recursos, aulas, usuarios…) no cambia
+Este proyecto es la **versión 2** de mi proyecto [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project) en el cual he integrado y practicado con las herramientas que estoy aprendiendo actualmente.
+La aplicación en sí (el CRUD de recursos, aulas, usuarios…) no cambia
 respecto a la v1; **lo que evoluciona es cómo se construye y opera la infraestructura** que
 la sostiene:
 
 - **v1** — la infraestructura de AWS (VPC, subredes, EC2 y RDS) se definía con
   **CloudFormation**, la herramienta de *Infraestructura como Código* nativa de AWS.
-- **v2 (este repo)** — la misma arquitectura, ahora descrita con **Terraform**, más el
+- **v2 ** — la misma arquitectura, ahora descrita con **Terraform**, más el
   empaquetado de la app en **Docker** y una capa de **CI/CD** con GitHub Actions.
 
 > 📎 **Repositorio de la v1 (CloudFormation):** [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project)
@@ -65,7 +65,7 @@ El repositorio está organizado por fases:
 │   └── docker-compose.yml      #   app + MySQL para levantar en local
 ├── terraform/                  # Fase 2 — Infraestructura como Código
 │   ├── main.tf, providers.tf, variables.tf, outputs.tf
-│   ├── terraform.tfvars.example#   plantilla de variables (sin secretos)
+│   ├── terraform.tfvars.example#   plantilla de variables 
 │   └── modules/                #   network · compute · database
 └── .github/workflows/          # Fase 3 — CI/CD
     ├── terraform.yml           #   Terraform CI
