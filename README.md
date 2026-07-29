@@ -118,8 +118,8 @@ comando. Esto la hace repetible, versionable en Git y fácil de eliminar cuando 
 El cambio de fondo respecto a la v1 es sustituir CloudFormation por Terraform. Ambos son
 *Infraestructura como Código*, pero con diferencias que justifican el salto:
 
-| Aspecto | CloudFormation <img width="512" height="512" alt="image" src="https://github.com/user-attachments/assets/31ee8976-98e3-49ec-9455-fa401d24b3de" />
- | Terraform <img width="512" height="512" alt="image" src="https://github.com/user-attachments/assets/51e7e37b-beb2-4bf7-84d6-99740f9e5d89" />
+| Aspecto | CloudFormation <img width="64" height="64" alt="image" src="https://github.com/user-attachments/assets/31ee8976-98e3-49ec-9455-fa401d24b3de" />
+ | Terraform <img width="64" height="64" alt="image" src="https://github.com/user-attachments/assets/51e7e37b-beb2-4bf7-84d6-99740f9e5d89" />
  |
 |---|---|---|
 | **Lenguaje** | YAML/JSON, específico de AWS | HCL, más legible y expresivo |
