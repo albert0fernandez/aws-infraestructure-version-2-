@@ -195,8 +195,6 @@ Docker Build se autentica en GHCR con el `GITHUB_TOKEN` automático de Actions, 
 - **SSH restringido** — puerto 22 solo desde tu IP.
 - **Usuario IAM en vez de root** — root se reserva para facturación y emergencias.
 
-### Lecciones aprendidas y mejoras futuras
-
-**Aprendido:** el `plan` antes del `apply` da confianza; el estado es delicado (lleva secretos, no se sube); los módulos hacen el código reutilizable; y `user_data` une Terraform y Docker.
+### Mejoras futuras
 
 **Mejoras futuras:** alta disponibilidad (ALB + Auto Scaling en varias AZ), backend remoto del estado (S3 + DynamoDB), CI con `terraform plan` en cada PR (vía OIDC), secretos en AWS Secrets Manager, RDS Multi-AZ y permisos IAM de mínimo privilegio.
