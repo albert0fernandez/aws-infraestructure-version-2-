@@ -1,6 +1,4 @@
-# AWS Cloud Infrastructure: Academia de Pintura Version 2 
-
-
+# AWS Cloud Infrastructure: Academia de Pintura — v2
 
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
@@ -10,30 +8,27 @@
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 
-**Integración de Docker · Terraform · CI/CD con GitHub Actions.**
+**Docker · Terraform · CI/CD con GitHub Actions.**
 
-Despliegue completo de una aplicación de inventario (PHP + MySQL) sobre AWS, construido en
-cuatro fases: primero la app se empaqueta en contenedores, luego la infraestructura de la
-nube se define como código con Terraform, después se automatiza con integración continua y,
-por último, se documenta todo el proceso.
+Despliegue de una app de inventario (PHP + MySQL) en AWS, en **cuatro fases**:
+contenerizar → infraestructura como código → automatizar → documentar.
 
 ## Roadmap
 
-- [x] **Fase 1** — Aplicación PHP dockerizada (Docker Compose: app + MySQL)
+- [x] **Fase 1** — App PHP dockerizada (Docker Compose: app + MySQL)
 - [x] **Fase 2** — Infraestructura en AWS con Terraform (VPC, RDS, EC2 + Docker)
-- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push de la imagen a GHCR)
-- [x] **Fase 4** — Documentación 
+- [x] **Fase 3** — CI/CD con GitHub Actions (validación de Terraform + build/push a GHCR)
+- [x] **Fase 4** — Documentación
 
 ## Índice
 
 - [Introducción](#introducción)
-- [Fase 1 — Aplicación dockerizada (local)](#fase-1--aplicación-dockerizada-local)
+- [Fase 1 — App dockerizada (local)](#fase-1--app-dockerizada-local)
 - [Fase 2 — Infraestructura en AWS con Terraform](#fase-2--infraestructura-en-aws-con-terraform)
   - [¿Por qué Terraform? CloudFormation vs Terraform](#por-qué-terraform-cloudformation-vs-terraform)
   - [Arquitectura](#arquitectura)
   - [Estructura y módulos](#estructura-y-módulos)
-  - [Variables necesarias](#variables-necesarias)
-  - [Despliegue](#despliegue)
+  - [Variables y despliegue](#variables-y-despliegue)
   - [Destroy — decisión FinOps](#destroy--decisión-finops)
 - [Fase 3 — CI/CD con GitHub Actions](#fase-3--cicd-con-github-actions)
 - [Fase 4 — Documentación](#fase-4--documentación)
@@ -44,62 +39,38 @@ por último, se documenta todo el proceso.
 
 ## Introducción
 
-Este proyecto es la **versión 2** de mi proyecto [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project) en el cual he integrado y practicado con las herramientas que estoy aprendiendo actualmente.
-La aplicación en sí (el CRUD de recursos, aulas, usuarios…) no cambia
-respecto a la v1; **lo que evoluciona es cómo se construye y opera la infraestructura** que
-la sostiene:
+Versión 2 de mi proyecto [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project), donde practico las herramientas que estoy aprendiendo. La aplicación (un CRUD de recursos, aulas y usuarios) no cambia; **lo que evoluciona es cómo se construye y opera su infraestructura**:
 
-- **v1** — la infraestructura de AWS (VPC, subredes, EC2 y RDS) se definía con
-  **CloudFormation**, la herramienta de *Infraestructura como Código* nativa de AWS.
-- **v2 ** — la misma arquitectura, ahora descrita con **Terraform**, más el
-  empaquetado de la app en **Docker** y una capa de **CI/CD** con GitHub Actions.
-
-> 📎 **Repositorio de la v1 (CloudFormation):** [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project)
+- **v1** — infraestructura definida con **CloudFormation**.
+- **v2** — misma arquitectura con **Terraform**, la app en **Docker** y una capa de **CI/CD**.
 
 El repositorio está organizado por fases:
 
 ```
 .
-├── docker/                     # Fase 1 — app dockerizada
-│   ├── app/                    #   Dockerfile + código PHP de la app
-│   ├── db/init.sql             #   esquema y datos iniciales de MySQL
-│   └── docker-compose.yml      #   app + MySQL para levantar en local
-├── terraform/                  # Fase 2 — Infraestructura como Código
-│   ├── main.tf, providers.tf, variables.tf, outputs.tf
-│   ├── terraform.tfvars.example#   plantilla de variables 
-│   └── modules/                #   network · compute · database
-└── .github/workflows/          # Fase 3 — CI/CD
-    ├── terraform.yml           #   Terraform CI
-    └── docker.yml              #   Docker Build → GHCR
+├── docker/            # Fase 1 — app dockerizada (Dockerfile, init.sql, docker-compose.yml)
+├── terraform/         # Fase 2 — Infraestructura como Código (módulos: network · compute · database)
+└── .github/workflows/ # Fase 3 — CI/CD (terraform.yml · docker.yml)
 ```
 
 ---
 
-## Fase 1 — Aplicación dockerizada (local)
+## Fase 1 — App dockerizada (local)
 
-La primera fase reproduce en local, con **Docker Compose**, el mismo par que luego habrá en
-AWS: la aplicación web y su base de datos, en dos contenedores separados.
+Con **Docker Compose** reproduzco en local el mismo par que luego habrá en AWS, en dos contenedores:
 
-- **`app`** — imagen basada en `php:8.3-apache` con las extensiones necesarias (`mysqli`,
-  `pdo_mysql`, `xsl`). Copia el código de la aplicación y sirve en el puerto 80.
-- **`db`** — MySQL 8 que se inicializa automáticamente con `db/init.sql` (esquema + datos).
+- **`app`** — `php:8.3-apache` (extensiones `mysqli`, `pdo_mysql`, `xsl`), sirve en el puerto 80.
+- **`db`** — MySQL 8, se inicializa sola con `db/init.sql`.
 
-Dos decisiones reproducen el comportamiento de producción:
-- La base de datos **no expone puertos** al exterior, igual que una RDS privada: solo la app
-  puede hablar con ella por la red interna de Docker.
-- La app **espera al *healthcheck*** de MySQL antes de arrancar, para no fallar si la base
-  todavía no está lista.
-
-### Cómo ejecutarlo en local
+Dos guiños a producción: la BD **no expone puertos** (aislada, como una RDS privada) y la app **espera al *healthcheck*** de MySQL antes de arrancar.
 
 ```bash
 cd docker
-cp .env.example .env      # ajusta credenciales si quieres
+cp .env.example .env
 docker compose up -d --build
 ```
 
-La app queda en `http://localhost:8081` (el `docker-compose.yml` mapea el puerto host
-`8081` al `80` del contenedor) y la base se carga sola desde `db/init.sql`.
+La app queda en **`http://localhost:8081`** (el compose mapea `8081:80`).
 
 <img width="1091" height="98" alt="image" src="https://github.com/user-attachments/assets/e788e235-827c-4d91-b459-f49aee4b34a8" />
 
@@ -109,34 +80,24 @@ La app queda en `http://localhost:8081` (el `docker-compose.yml` mapea el puerto
 
 ## Fase 2 — Infraestructura en AWS con Terraform
 
-La segunda fase lleva esa misma arquitectura a AWS, pero **sin crearla a mano** en la
-consola: se describe en ficheros `.tf` y Terraform la crea (o la destruye) con un solo
-comando. Esto la hace repetible, versionable en Git y fácil de eliminar cuando no se usa.
+Llevo esa arquitectura a AWS **sin clicar en la consola**: la describo en ficheros `.tf` y Terraform la crea (o la destruye) con un comando. Así es repetible, versionable en Git y fácil de eliminar.
 
 ### ¿Por qué Terraform? CloudFormation vs Terraform
 
-El cambio de fondo respecto a la v1 es sustituir CloudFormation por Terraform. Ambos son
-*Infraestructura como Código*, pero con diferencias que justifican el salto:
+Ambos son *Infraestructura como Código*, pero con diferencias que justifican el salto:
 
 | Aspecto | <img src="https://github.com/user-attachments/assets/1b30b26d-7baf-49b8-998d-709dbaf2a04c" width="22" height="22" align="center" /> CloudFormation | <img src="https://github.com/user-attachments/assets/15751f6f-39cb-4f1e-a7dd-6a43a2e3fcc4" width="22" height="22" align="center" /> Terraform |
 | :--- | :--- | :--- |
-| **Lenguaje** | YAML/JSON, específico de AWS | HCL, más legible y expresivo |
-| **Alcance** | Solo AWS | Multi-proveedor (AWS, Azure, GCP...) |
-| **Estado** | Lo gestiona AWS internamente (*stacks*), no ves el fichero | Fichero `terraform.tfstate` que gestionas tú (local o remoto) |
-| **Previsualización** | *Change sets* (existe, pero es un paso aparte) | `terraform plan` nativo: ves los cambios antes de aplicar |
-| **Reutilización** | *Nested stacks*, algo rígidas | Módulos de primera clase (`network`, `compute`, `database`) |
-| **Comunidad** | Recursos y ejemplos de AWS | *Registry* con miles de módulos y *providers* |
+| **Lenguaje** | YAML/JSON, solo AWS | HCL, multi-proveedor |
+| **Estado** | Lo gestiona AWS (*stacks*) | Fichero `terraform.tfstate` que gestionas tú |
+| **Previsualización** | *Change sets* (paso aparte) | `terraform plan` nativo: ves los cambios antes de aplicar |
+| **Reutilización** | *Nested stacks* | **Módulos** de primera clase |
 
-**Qué se aprende con cada uno:** CloudFormation enseña el modelo de recursos de AWS "puro",
-sin capas intermedias; Terraform aporta un flujo de trabajo más seguro (el `plan` antes del
-`apply`), un estado explícito que hay que entender y proteger, y una modularidad que hace el
-código reutilizable y fácil de razonar.
+**En resumen:** Terraform aporta un `plan` antes del `apply`, un estado explícito que hay que proteger y una modularidad que hace el código reutilizable.
 
 ### Arquitectura
 
-Una **VPC** con dos capas. La **EC2** vive en subredes **públicas** (tiene IP pública y sirve
-la app); la **RDS** vive en subredes **privadas** (sin salida a Internet). La EC2 es la única
-que puede hablar con la base de datos, por el puerto 3306.
+Una **VPC** de dos capas: la **EC2** vive en subredes **públicas** (sirve la app); la **RDS**, en subredes **privadas** (sin Internet). Solo la EC2 habla con la base de datos, por el puerto 3306. Todo en **2 zonas de disponibilidad**.
 
 ```mermaid
 flowchart TB
@@ -152,134 +113,87 @@ flowchart TB
 
 <img width="592" height="740" alt="Diagrama de arquitectura AWS" src="https://github.com/user-attachments/assets/2566d9ce-b8fb-4f8b-80d9-b9054362040f" />
 
-Todo se despliega en **2 zonas de disponibilidad** (subredes redundantes). El control de
-acceso lo hacen los ***security groups*** (cortafuegos):
-
-- **web** — puerto **80** abierto a todo Internet; **22 (SSH)** solo desde tu IP.
-- **db** — puerto **3306** abierto **únicamente** desde el *security group* web.
+El acceso lo controlan los ***security groups***: puerto **80** abierto, **22 (SSH)** solo desde tu IP y **3306** solo desde la capa web.
 
 #### 🛠️ Recursos de AWS utilizados
 
-| | Servicio | Categoría | Función en el proyecto |
+| | Servicio | Categoría | Función |
 |:---:|:---|:---|:---|
 | 🌐 | **VPC** | Networking | Red aislada con subredes públicas y privadas (2 AZ). |
 | 🚪 | **Internet Gateway** | Networking | Salida a Internet para las subredes públicas. |
-| 🛡️ | **Security Groups** | Seguridad | Cortafuegos: 80 público, 22 solo tu IP, 3306 solo desde la web. |
-| 🖥️ | **EC2** | Computación | *Hosting* de la aplicación PHP en un contenedor Docker. |
+| 🛡️ | **Security Groups** | Seguridad | Cortafuegos: 80 público, 22 tu IP, 3306 solo web. |
+| 🖥️ | **EC2** | Computación | *Hosting* de la app PHP en un contenedor Docker. |
 | 🗄️ | **RDS (MySQL 8)** | Base de datos | Base de datos relacional gestionada y privada. |
 
-> A diferencia de la v1, esta versión mantiene una arquitectura **mínima y de coste ~0 €
-> bajo demanda** (Free Tier): no incluye ELB/ASG, S3 ni Lambda.
+> Arquitectura **mínima y de coste ~0 € bajo demanda** (Free Tier): sin ELB/ASG, S3 ni Lambda.
 
 ### Estructura y módulos
 
-El código está dividido en **módulos** reutilizables, igual que en programación se separa el
-código en funciones. Cada módulo recibe sus variables, crea sus recursos y devuelve sus
-salidas:
+El código se divide en **módulos** reutilizables (como funciones):
 
 | Módulo | Qué crea |
 | :--- | :--- |
-| **`network`** | VPC (`10.2.0.0/16`), subredes públicas/privadas (2 AZ), Internet Gateway, tablas de rutas y los *security groups*. |
-| **`compute`** | EC2 Ubuntu 24.04 (`t3.micro`, Free Tier) + `user_data.sh.tpl`. |
-| **`database`** | RDS MySQL 8 (`db.t3.micro`, Free Tier) privada, en las subredes privadas. |
+| **`network`** | VPC, subredes públicas/privadas (2 AZ), Internet Gateway, rutas y *security groups*. |
+| **`compute`** | EC2 Ubuntu 24.04 (`t3.micro`) + `user_data.sh.tpl`. |
+| **`database`** | RDS MySQL 8 (`db.t3.micro`) privada. |
 
-El fichero **`user_data.sh.tpl`** es donde **se unen Docker y Terraform**: es el script que
-la EC2 ejecuta al arrancar. Instala Docker, clona este repositorio, espera a que la RDS
-acepte conexiones, carga `init.sql`, fija una contraseña conocida para el usuario
-`Administrador` y, por último, construye la imagen y levanta el contenedor apuntando a la RDS.
-Por eso, tras el `apply`, conviene dar ~3-4 min extra a que ese arranque termine.
+**`user_data.sh.tpl`** es donde **se unen Docker y Terraform**: al arrancar, la EC2 instala Docker, clona el repo, carga `init.sql` y levanta el contenedor apuntando a la RDS (por eso tras el `apply` conviene esperar ~3-4 min).
 
-### Variables necesarias
+### Variables y despliegue
 
-Crea `terraform/terraform.tfvars` a partir de `terraform.tfvars.example`. Las dos primeras son
-obligatorias (no tienen valor por defecto) y **nunca se suben al repositorio**:
-
-| Variable | Obligatoria | Descripción |
-|---|---|---|
-| `admin_cidr` | ✅ | Tu IP pública en CIDR (ej. `1.2.3.4/32`) para el acceso SSH |
-| `db_password` | ✅ | Contraseña maestra de la RDS |
-| `aws_region` | — | Por defecto `eu-west-1` |
-| `project_name` | — | Por defecto `retacantabria-v2` |
-| `instance_type` / `db_name` / `db_user` | — | Valores por defecto elegibles Free Tier |
-
-### Despliegue
+Dos variables son obligatorias y **nunca se suben al repo**: `admin_cidr` (tu IP en CIDR, para SSH) y `db_password` (contraseña maestra de la RDS). El resto tienen valores por defecto (`aws_region = eu-west-1`, Free Tier…). Crea `terraform.tfvars` a partir de `terraform.tfvars.example`.
 
 ```bash
-export AWS_PROFILE=admin       # usa el usuario IAM, no root (ver sección Seguridad)
+export AWS_PROFILE=admin   # usuario IAM, no root
 cd terraform
-terraform init                 # descarga el proveedor de AWS (solo la 1ª vez)
-terraform plan                 # muestra qué se va a crear, sin tocar nada
-terraform apply                # crea la infraestructura REAL (~5-10 min por la RDS)
+terraform init
+terraform plan             # muestra qué se va a crear, sin tocar nada
+terraform apply            # crea la infraestructura (~5-10 min por la RDS)
 ```
 
-Al terminar, Terraform muestra los **outputs**: la IP pública de la EC2 y el *endpoint* de la
-RDS. Cuando el `user_data` acabe (~3-4 min), la app estará disponible en `http://<IP-pública>`.
+Al terminar verás los **outputs** (IP pública + endpoint RDS). Login de demostración: **`Administrador`** / **`MiClave@2026`**.
 
-Acceso a la aplicación (usuario de demostración): **`Administrador`** / **`MiClave@2026`**.
-
-<!-- 📸 CAPTURA: final del `apply` con los outputs -->
-
-> **🔧 Un reto que resolví:** en el primer despliegue el login fallaba porque el `init.sql`
-> del reto traía *hashes* de contraseña desconocidos. Lo resolví fijando una contraseña
-> conocida (un `UPDATE` en `init.sql` y en el `user_data`) y **recreando solo la instancia
-> EC2** con `terraform apply -replace="module.compute.aws_instance.web"`, sin tocar la RDS ni
-> el resto de la red. Es un buen ejemplo de por qué el estado y la modularidad de Terraform
-> importan: puedes reconstruir una pieza sin afectar a las demás.
+> **🔧 Un reto que resolví:** el login fallaba porque el `init.sql` traía *hashes* de contraseña desconocidos. Lo arreglé fijando una contraseña conocida y **recreando solo la EC2** con `terraform apply -replace="module.compute.aws_instance.web"`, sin tocar la RDS ni la red. Buen ejemplo de por qué el estado y la modularidad de Terraform importan: reconstruyes una pieza sin afectar a las demás.
 
 ### Destroy — decisión FinOps
 
-Como AWS **cobra por hora** mientras los recursos existen, la plataforma se levanta **bajo
-demanda** y se destruye al terminar:
+AWS **cobra por hora**, así que la plataforma se levanta bajo demanda y se destruye al terminar:
 
 ```bash
 export AWS_PROFILE=admin
 cd terraform
-terraform destroy              # borra EC2, RDS, VPC y todo lo creado
+terraform destroy
 ```
 
-Con la infraestructura destruida el **coste es ~0 €**: el código Terraform queda en el repo y
-se puede volver a levantar todo idéntico en minutos cuando haga falta. Terraform sabe qué
-borrar gracias al fichero de estado `terraform.tfstate`.
+Destruida, el **coste es ~0 €**: el código queda en el repo y se vuelve a levantar idéntico en minutos.
 
 ```
-Código .tf  →  apply  →  Infra REAL en AWS  →  verificar  →  destroy
-(describes)    (crea)     (existe y cobra)      (capturas)    (borra todo)
+Código .tf  →  apply  →  Infra en AWS  →  verificar  →  destroy
+(describes)    (crea)     (existe/cobra)   (capturas)    (borra todo)
 ```
 
 ---
 
 ## Fase 3 — CI/CD con GitHub Actions
 
-La tercera fase automatiza la validación y la construcción: cada cambio en el repositorio se
-comprueba y se empaqueta solo, sin pasos manuales. Los workflows viven en `.github/workflows/`.
+Cada cambio se valida y se empaqueta solo, sin pasos manuales. Los workflows viven en `.github/workflows/`:
 
-| Workflow | Fichero | Se dispara cuando… | Qué hace |
-|---|---|---|---|
-| **Terraform CI** | `terraform.yml` | cambia algo en `terraform/**` (push o PR) | `fmt -check` → `init -backend=false` → `validate`. Comprueba formato y sintaxis **sin necesitar credenciales AWS** |
-| **Docker Build** | `docker.yml` | cambia algo en `docker/**` (push) | construye la imagen (`docker/app`) y, si el build pasa, la sube a **GHCR** como `ghcr.io/albert0fernandez/academia-app` con los tags `latest` y el SHA corto |
+| Workflow | Se dispara con… | Qué hace |
+|---|---|---|
+| **Terraform CI** | cambios en `terraform/**` | `fmt` → `init` → `validate`. Valida sintaxis **sin credenciales AWS**. |
+| **Docker Build** | cambios en `docker/**` | construye la imagen y la sube a **GHCR** (`ghcr.io/albert0fernandez/academia-app`) con tags `latest` y SHA corto. |
 
-Detalles de diseño:
-- **Terraform CI no usa credenciales de AWS**: validar el formato y la sintaxis no requiere
-  conectarse a la nube, así que el workflow es seguro y rápido.
-- **Docker Build se autentica en GHCR con el `GITHUB_TOKEN`** automático de Actions (permiso
-  `packages: write`), sin claves estáticas propias.
-
-El estado de ambos se ve en los **badges** del principio de este README y en la pestaña
-**Actions** del repositorio.
-
-<!-- 📸 CAPTURA: pestaña Actions con ambos workflows en verde -->
+Docker Build se autentica en GHCR con el `GITHUB_TOKEN` automático de Actions, sin claves propias. El estado se ve en los **badges** de arriba y en la pestaña **Actions**.
 
 ---
 
 ## Fase 4 — Documentación
 
-La cuarta fase es esta propia documentación, más las capturas del proyecto en funcionamiento.
-
 **App en AWS** — inventario funcionando con la IP pública:
 
 <img width="864" height="932" alt="App de inventario en AWS" src="https://github.com/user-attachments/assets/2ebd0469-070e-4329-84d3-8804aef48482" />
 
-**Consola de AWS (región `eu-west-1`)** — EC2 en *running* y RDS en *available*:
+**Consola de AWS (`eu-west-1`)** — EC2 en *running* y RDS en *available*:
 
 <img width="1088" height="311" alt="Consola EC2 en AWS" src="https://github.com/user-attachments/assets/ef5fea0d-5e29-49d6-bad0-0c1bf9903192" />
 
@@ -287,28 +201,13 @@ La cuarta fase es esta propia documentación, más las capturas del proyecto en 
 
 ### Seguridad
 
-Buenas prácticas aplicadas en el proyecto:
-
-- **Secretos fuera del repo** — `terraform.tfvars`, `terraform.tfstate`, `.terraform/` y
-  `tfplan` están en `.gitignore`. La contraseña de la RDS nunca se versiona.
-- **RDS privada** — sin IP pública; solo accesible desde la EC2 por el puerto 3306.
-- **SSH restringido** — el puerto 22 solo se abre desde tu IP (`admin_cidr`).
-- **Usuario IAM en vez de root** — el trabajo diario (Terraform, CLI) se hace con un usuario
-  IAM con permisos definidos; la cuenta *root* se reserva para facturación y emergencias.
-- **GHCR con `GITHUB_TOKEN`** — la CI publica la imagen sin claves estáticas propias.
+- **Secretos fuera del repo** — `tfvars`, `tfstate`, `.terraform/` y `tfplan` en `.gitignore`.
+- **RDS privada** — sin IP pública; solo accesible desde la EC2.
+- **SSH restringido** — puerto 22 solo desde tu IP.
+- **Usuario IAM en vez de root** — root se reserva para facturación y emergencias.
 
 ### Lecciones aprendidas y mejoras futuras
 
-**Lecciones aprendidas**
-- `terraform plan` antes de `apply` da confianza: ves exactamente qué va a cambiar.
-- El **estado** (`terraform.tfstate`) es delicado: contiene secretos y nunca debe subirse.
-- Separar en **módulos** (`network`/`compute`/`database`) hace el código legible y reutilizable.
-- El patrón `user_data` une Terraform y Docker: la EC2 se autoconfigura al arrancar.
+**Aprendido:** el `plan` antes del `apply` da confianza; el estado es delicado (lleva secretos, no se sube); los módulos hacen el código reutilizable; y `user_data` une Terraform y Docker.
 
-**Mejoras futuras**
-- **Alta disponibilidad**: ALB + Auto Scaling Group en varias AZ, en vez de una única EC2.
-- **Backend remoto del estado**: `terraform.tfstate` en S3 con bloqueo en DynamoDB.
-- **CI con `terraform plan`**: comentar el plan en cada PR (credenciales vía OIDC, sin claves estáticas).
-- **Gestión de secretos**: mover la contraseña de la RDS a AWS Secrets Manager.
-- **RDS Multi-AZ** y backups automáticos para un escenario de producción.
-- **Permisos IAM de mínimo privilegio** en lugar de `AdministratorAccess`.
+**Mejoras futuras:** alta disponibilidad (ALB + Auto Scaling en varias AZ), backend remoto del estado (S3 + DynamoDB), CI con `terraform plan` en cada PR (vía OIDC), secretos en AWS Secrets Manager, RDS Multi-AZ y permisos IAM de mínimo privilegio.
