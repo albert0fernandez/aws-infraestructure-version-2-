@@ -63,8 +63,8 @@ Despliegue de una app real de inventario (PHP + MySQL) en AWS, en **cuatro fases
 
 Versión 2 de mi proyecto [aws-cloud-infrastructure-project](https://github.com/albert0fernandez/aws-cloud-infrastructure-project), donde practico las herramientas que estoy aprendiendo. La aplicación (un CRUD de recursos, aulas y usuarios) no cambia; **lo que evoluciona es cómo se construye y opera su infraestructura**:
 
-- **v1** — infraestructura definida con **CloudFormation**.
-- **v2** — misma arquitectura con **Terraform**, la app en **Docker** y una capa de **CI/CD**.
+- **v1** — infraestructura de alta disponibilidad con **CloudFormation** (ALB + Auto Scaling, backups serverless), nacida del reto **RetaCantabria 2025**.
+- **v2** — rediseño desde cero con **Terraform**: arquitectura simplificada al mínimo (FinOps), la app en **Docker** y una capa de **CI/CD**.
 
 El repositorio está organizado por fases:
 
